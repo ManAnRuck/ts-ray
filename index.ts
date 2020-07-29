@@ -43,8 +43,8 @@ export default (xOptions?: Options) => {
   var filters = options.filters || {};
 
   const xray = (
-    source: string | Cheerio | CheerioAPI | CheerioStatic,
-    scope: any,
+    source: string | Cheerio | CheerioAPI | CheerioStatic | any,
+    scope?: any,
     selector?: any
   ) => {
     debug("xray params: %j", {

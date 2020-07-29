@@ -4,6 +4,7 @@
  * Module dependencies
  */
 
+import "mocha";
 import { stripIndent as m } from "multiline";
 import concat from "concat-stream";
 import { readFileSync as read } from "fs";
@@ -40,7 +41,7 @@ describe("Xray basics", function () {
       inner: x("title", {
         title: "@text",
       }),
-    })("http://www.google.com/ncr", function (err, obj) {
+    })("http://www.google.com/ncr", function (err: Error, obj: any) {
       if (err) return done(err);
       assert.equal("Google", obj.title, "{ title: title@text }");
       assert.equal("Google Images", obj.image);
@@ -57,7 +58,7 @@ describe("Xray basics", function () {
       list: x("body", {
         first: x("a@href", "title"),
       }),
-    })(url, function (err, obj) {
+    })(url, function (err: Error, obj: any) {
       if (err) return done(err);
       assert.deepEqual(obj, {
         list: {
@@ -73,7 +74,7 @@ describe("Xray basics", function () {
     var x = Xray();
     x("http://google.com", {
       title: "title",
-    })(function (err, obj) {
+    })(function (err: Error, obj: any) {
       if (err) return done(err);
       assert.deepEqual(obj, {
         title: "Google",
@@ -86,7 +87,7 @@ describe("Xray basics", function () {
     var x = Xray();
     x("garbageIn", {
       title: "title",
-    })(function (err, obj) {
+    })(function (err: Error, obj: any) {
       if (err) return done(err);
       assert.deepEqual(obj, {});
       done();
@@ -96,7 +97,7 @@ describe("Xray basics", function () {
   it("should work with arrays", function (done) {
     var x = Xray();
 
-    x(url, ["a@href"])(function (err, arr) {
+    x(url, ["a@href"])(function (err: Error, arr: any) {
       if (err) return done(err);
       assert.equal(50, arr.length);
       assert.equal("http://loripsum.net/", arr.pop());
@@ -110,7 +111,7 @@ describe("Xray basics", function () {
   it("should work with an array without a url", function (done) {
     var x = Xray();
 
-    x(["a@href"])(url, function (err, arr) {
+    x(["a@href"])(url, function (err: Error, arr: any) {
       if (err) return done(err);
       assert.equal(50, arr.length);
       assert.equal("http://loripsum.net/", arr.pop());
@@ -124,7 +125,7 @@ describe("Xray basics", function () {
   it("arrays should work with a simple selector", function (done) {
     var x = Xray();
 
-    x("a", [{ link: "@href" }])(url, function (err, arr) {
+    x("a", [{ link: "@href" }])(url, function (err: Error, arr: any) {
       if (err) return done(err);
       assert.equal(50, arr.length);
       assert.deepEqual({ link: "http://loripsum.net/" }, arr.pop());
@@ -140,7 +141,7 @@ describe("Xray basics", function () {
       '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
     var $ = cheerio.load(html);
     var x = Xray();
-    x(".tags", ["li"])($, function (err, arr) {
+    x(".tags", ["li"])($, function (err: Error, arr: any) {
       if (err) return done(err);
       assert.equal(5, arr.length);
       assert.equal("a", arr[0]);
@@ -158,7 +159,7 @@ describe("Xray basics", function () {
     var $ = cheerio.load(html);
     var x = Xray();
 
-    x(".tags", [["li"]])($, function (err, arr) {
+    x(".tags", [["li"]])($, function (err: Error, arr: any) {
       if (err) return done(err);
       assert(arr[0].length === 3);
       assert(arr[0][0] === "a");
@@ -202,7 +203,7 @@ describe("Xray basics", function () {
         title: "h2",
         tags: x(".tags", ["li"]),
       },
-    ])(function (err, arr) {
+    ])(function (err: Error, arr: any) {
       if (err) return done(err);
       assert.deepEqual(
         [
@@ -227,7 +228,7 @@ describe("Xray basics", function () {
           description: ".item-content section",
         },
       ]),
-    })(function (err, obj) {
+    })(function (err: Error, obj: any) {
       if (err) return done(err);
       assert(obj.title === "mat.io");
 
@@ -268,13 +269,13 @@ describe("Xray basics", function () {
     var $ = cheerio.load(html);
     var x = Xray({
       filters: {
-        trim: function (value) {
+        trim: function (value: any) {
           return typeof value === "string" ? value.trim() : value;
         },
-        slice: function (value, limit) {
+        slice: function (value: any, limit: any) {
           return typeof value === "string" ? value.slice(0, limit) : value;
         },
-        reverse: function (value) {
+        reverse: function (value: any) {
           return typeof value === "string"
             ? value.split("").reverse().join("")
             : value;
@@ -285,7 +286,7 @@ describe("Xray basics", function () {
     x($, {
       title: "h3 | trim | reverse | slice:4",
       tags: [".tags > li | trim"],
-    })(function (err, obj) {
+    })(function (err: Error, obj: any) {
       if (err) return done(err);
       assert.deepEqual(obj, {
         title: "sgaT",
@@ -310,11 +311,11 @@ describe("Xray basics", function () {
       .paginate(".nav-previous a@href")
       .limit(3);
 
-    xray(function (err, arr) {
+    xray(function (err: Error, arr: any) {
       if (err) return done(err);
       assert(arr.length, "array should have a length");
 
-      arr.forEach(function (item) {
+      arr.forEach(function (item: any) {
         assert(item.title.length);
         assert.equal(true, isUrl(item.link));
       });
@@ -334,7 +335,7 @@ describe("Xray basics", function () {
     ])
       .paginate(".next_page@href")
       .limit(3)
-      .abort(function (result) {
+      .abort(function (result: any) {
         var i = 0;
 
         // Issue 40 is on page 2 of our result set
@@ -345,12 +346,12 @@ describe("Xray basics", function () {
         return false;
       });
 
-    xray(function (err, arr) {
+    xray(function (err: Error, arr: any) {
       if (err) return done(err);
       // 25 results per page
       assert.equal(50, arr.length);
 
-      arr.forEach(function (item) {
+      arr.forEach(function (item: any) {
         assert(item.id.length);
         assert(item.title.length);
       });
@@ -370,19 +371,19 @@ describe("Xray basics", function () {
     ])
       .paginate(".next_page@href")
       .limit(3)
-      .abort(function (result, url) {
+      .abort(function (result: any, url: any) {
         // Break after page 2
         if (url.indexOf("page=3") >= 0) return true;
 
         return false;
       });
 
-    xray(function (err, arr) {
+    xray(function (err: Error, arr: any) {
       if (err) return done(err);
       // 25 results per page
       assert.equal(50, arr.length);
 
-      arr.forEach(function (item) {
+      arr.forEach(function (item: any) {
         assert(item.id.length);
         assert(item.title.length);
       });
@@ -403,7 +404,7 @@ describe("Xray basics", function () {
     ])
       .paginate(".next_page@href")
       .limit(10);
-    (function (err, arr) {
+    (function (err: Error, arr: any) {
       timesCalled++;
       assert.ifError(err);
       assert.equal(1, timesCalled, "callback was called more than once");
@@ -459,7 +460,7 @@ describe("Xray basics", function () {
 
           assert(arr.length, "array should have a length");
 
-          arr.forEach(function (item) {
+          arr.forEach(function (item: any) {
             assert(item.title.length);
             assert.equal(true, isUrl(item.link));
           });
@@ -509,7 +510,7 @@ describe("Xray basics", function () {
         .on("finish", function () {
           var arr = JSON.parse(read(path, "utf8"));
           assert(arr.length, "array should have a length");
-          arr.forEach(function (item) {
+          arr.forEach(function (item: any) {
             assert(item.title.length);
             assert.equal(true, isUrl(item.link));
           });

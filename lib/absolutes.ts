@@ -50,7 +50,7 @@ function isValidUrl(src: string) {
  * @return {$}
  */
 
-function absolute(path: string, $: CheerioAPI) {
+function absolute(path: string, $: CheerioStatic) {
   var parts = parse(path);
   var remote = parts.protocol + "//" + parts.host;
   // apply <base> tag transformation

@@ -9,23 +9,23 @@ import { EventEmitter } from "events";
 import streamHelper from "../lib/stream";
 
 function createStream() {
-  var instance = new EventEmitter();
+  var instance: any = new EventEmitter();
   instance._data = "";
   instance._open = true;
-  instance.on("write", function (chunk) {
+  instance.on("write", function (chunk: any) {
     instance._data += chunk;
   });
   instance.once("end", function () {
     instance._open = false;
   });
 
-  instance.write = function write(chunk) {
+  instance.write = function write(chunk: any) {
     instance.emit("write", String(chunk) || "");
   };
-  instance.error = function error(err) {
+  instance.error = function error(err: Error) {
     instance.emit("error", err);
   };
-  instance.end = function end(chunk) {
+  instance.end = function end(chunk: any) {
     if (!instance._open) return;
     instance.emit("write", chunk);
     instance.emit("end");
@@ -34,8 +34,8 @@ function createStream() {
   return instance;
 }
 
-function getSessionResult() {
-  var events = Array.prototype.slice.call(arguments);
+function getSessionResult(...args: any[]) {
+  var events = Array.prototype.slice.call(args);
   var stream = createStream();
   var helper = streamHelper.array(stream);
   events.forEach(function (data, index) {

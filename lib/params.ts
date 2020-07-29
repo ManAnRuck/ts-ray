@@ -24,8 +24,8 @@ export interface ParamsResult {
 
 export function params(
   source: string | any[] | any,
-  context: string | any[] | any,
-  selector: string | any[] | any
+  context?: string | any[] | any,
+  selector?: string | any[] | any
 ) {
   var args: ParamsResult = {
     selector: source,
