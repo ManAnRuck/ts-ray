@@ -4,7 +4,7 @@
 
 ![Last version](https://img.shields.io/github/tag/mananruck/ts-ray.svg?style=flat-square)
 [![Build Status](http://img.shields.io/travis/mananruck/ts-ray/master.svg?style=flat-square)](https://travis-ci.org/mananruck/ts-ray)
-[![Coverage Status](https://coveralls.io/repos/github/ManAnRuck/ts-ray/badge.svg?branch=master)](https://coveralls.io/github/ManAnRuck/ts-ray?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/ManAnRuck/ts-ray/badge.svg?branch=master&style=flat-square)](https://coveralls.io/github/ManAnRuck/ts-ray?branch=master)
 [![Dependency status](http://img.shields.io/david/mananruck/ts-ray.svg?style=flat-square)](https://david-dm.org/mananruck/ts-ray)
 [![Dev Dependencies Status](http://img.shields.io/david/dev/mananruck/ts-ray.svg?style=flat-square)](https://david-dm.org/mananruck/ts-ray#info=devDependencies)
 [![NPM Status](http://img.shields.io/npm/dm/ts-ray.svg?style=flat-square)](https://www.npmjs.org/package/ts-ray)
