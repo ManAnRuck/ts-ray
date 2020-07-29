@@ -23,7 +23,7 @@ const debug = Debug("resolve");
  */
 
 export function resolve(
-  $: Cheerio | CheerioAPI,
+  $: CheerioStatic | Cheerio,
   scope: any,
   selector: string | string[],
   filters: Filters
@@ -69,7 +69,12 @@ export function resolve(
  * @return {Array|String}
  */
 
-function find($: Cheerio | CheerioAPI, scope: any, selector: any, attr: any) {
+function find(
+  $: Cheerio | CheerioStatic,
+  scope: any,
+  selector: any,
+  attr: any
+) {
   if (scope && isArray(selector)) {
     var $scope = select($, scope);
     var out: any[] = [];
@@ -109,7 +114,7 @@ function find($: Cheerio | CheerioAPI, scope: any, selector: any, attr: any) {
  * @return {Cheerio}
  */
 
-function select($: Cheerio | CheerioAPI, selector: string) {
+function select($: Cheerio | CheerioStatic, selector: string) {
   if ("is" in $ && $.is(selector)) return $;
   return "find" in $ ? $.find(selector) : $(selector);
 }
@@ -160,7 +165,7 @@ export interface FilterObject {
  */
 function filter(
   obj: FilterObject,
-  $: Cheerio | CheerioAPI,
+  $: Cheerio | CheerioStatic,
   _scope: string | boolean | null,
   _selector: Selector,
   value: string,

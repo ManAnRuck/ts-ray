@@ -55,8 +55,8 @@ export default (xOptions?: Options) => {
   var filters = options.filters || {};
 
   const xray = (
-    source: string | Cheerio | CheerioAPI | CheerioStatic | any,
-    scope?: any,
+    source: Selector | Cheerio | CheerioStatic,
+    scope?: Selector,
     selector?: Selector
   ) => {
     debug("xray params: %j", {
@@ -91,7 +91,7 @@ export default (xOptions?: Options) => {
         selector: selector,
       });
 
-      const next = (err: Error, obj?: any, $?: Cheerio) => {
+      const next = (err: Error, obj?: any, $?: CheerioStatic) => {
         if (err) return fn(err);
         var paginate = state.paginate;
         var limit = --(state.limit as number);
@@ -175,7 +175,7 @@ export default (xOptions?: Options) => {
           walkHTML($, next);
         });
       } else if (source) {
-        var $ = load(source);
+        var $ = load(source as string | CheerioStatic);
         walkHTML($, next);
       } else {
         debug("%s is not a url or html. Skipping!", source);
@@ -247,20 +247,20 @@ const Request = (crawler: Crawler.Instance) => {
   };
 };
 
-function load(html: any, url?: string) {
+const load = (html: string | CheerioStatic, url?: string) => {
   html = html || "";
-  var $ = html.html ? html : cheerio.load(html);
+  var $ = typeof html !== "string" ? html : cheerio.load(html);
   if (url) $ = absolutes(url, $);
   return $;
-}
+};
 
 function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
-  return ($: Cheerio | CheerioAPI, fn: any) => {
+  return ($: CheerioStatic | Cheerio, fn: any) => {
     walk(
       selector,
       (v, _k, next) => {
         if (typeof v === "string") {
-          var value = resolve($!, root(scope), v, filters);
+          var value = resolve($, root(scope), v, filters);
           return next(null, value);
         } else if (typeof v === "function") {
           return v($, (err: Error, obj: any) => {
@@ -271,7 +271,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
           if (isStringArray(v)) {
             return next(null, resolve($, root(scope), v, filters));
           } else if (typeof v[0] === "object") {
-            var $scope = "find" in $ ? $.find(scope) : $(scope);
+            var $scope = "find" in $ ? ($ as Cheerio).find(scope) : $(scope);
             var pending = $scope.length;
             var out: any[] = [];
 
