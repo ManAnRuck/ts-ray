@@ -4,7 +4,7 @@
 import Debug from "debug";
 import { isArray } from "./util";
 import { Selector } from "./params";
-const parse = require("x-ray-parse");
+import parse from "x-ray-parse";
 
 const debug = Debug("resolve");
 
@@ -24,13 +24,13 @@ const debug = Debug("resolve");
 
 export function resolve(
   $: CheerioStatic | Cheerio,
-  scope: any,
+  scopeP: any,
   selector: string | string[],
-  filters: Filters
+  filters: Filters = {}
 ) {
+  let scope = scopeP;
   // console.log("XXX", typeof selector, selector);
   debug("resolve($j, %j)", scope, selector);
-  filters = filters || {};
   const array = isArray(selector);
   const obj = parse(array ? selector[0] : selector);
   obj.attribute = obj.attribute || "text";
@@ -75,9 +75,11 @@ function find(
   selector: any,
   attr: any
 ) {
+  let $scope: Cheerio;
+  let out: any[];
   if (scope && isArray(selector)) {
-    var $scope = select($, scope);
-    var out: any[] = [];
+    $scope = select($, scope);
+    out = [];
     $scope.map((i: number) => {
       const $el = $scope.eq(i);
       const $children = select($el, selector[0]);

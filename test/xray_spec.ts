@@ -406,7 +406,7 @@ describe("Xray basics", function () {
     ])
       .paginate(".next_page@href")
       .limit(10);
-    (function (err: Error, _arr: any) {
+    (function (err: Error) {
       timesCalled++;
       assert.ifError(err);
       assert.equal(1, timesCalled, "callback was called more than once");
@@ -523,7 +523,9 @@ describe("Xray basics", function () {
   });
 
   describe(".then(cb, err)", function () {
-    const noop = function () {};
+    const noop = () => {
+      // noop
+    };
     const html =
       '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
     const expected = [

@@ -10,10 +10,9 @@ import Debug from "debug";
 import cheerio from "cheerio";
 import enstore from "enstore";
 import { isStringArray } from "./lib/typeGuards";
+import fs from "fs";
 
 const debug = Debug("ts-ray");
-
-const fs = require("fs");
 
 const CONST: {
   CRAWLER_METHODS: string[];
@@ -42,7 +41,7 @@ export interface Options {
 }
 
 export interface State {
-  stream: boolean;
+  stream: any;
   concurrency: number;
   paginate: string | false;
   limit: number | ((limit: number) => any);
@@ -55,19 +54,19 @@ export default (xOptions?: Options) => {
   const filters = options.filters || {};
 
   const xray = (
-    source: Selector | Cheerio | CheerioStatic,
-    scope?: Selector,
-    selector?: Selector
+    sourceP: Selector | Cheerio | CheerioStatic,
+    scopeP?: Selector,
+    selectorP?: Selector
   ) => {
     debug("xray params: %j", {
-      source: source,
-      scope: scope,
-      selector: selector,
+      source: sourceP,
+      scope: scopeP,
+      selector: selectorP,
     });
-    const args = params(source, scope, selector);
-    selector = args.selector;
-    source = args.source;
-    scope = args.context;
+    const args = params(sourceP, scopeP, selectorP);
+    const selector = args.selector;
+    let source = args.source;
+    const scope = args.context;
 
     const state: State = { ...CONST.INIT_STATE };
     const store = enstore();
@@ -78,8 +77,9 @@ export default (xOptions?: Options) => {
 
     const request = Request(crawler);
 
-    const node = function (source2: any, fn?: any) {
-      if (!fn) {
+    const node = function (source2: any, fnP?: any) {
+      let fn = fnP;
+      if (!fnP) {
         fn = source2;
       } else {
         source = source2;
@@ -247,8 +247,8 @@ const Request = (crawler: Crawler.Instance) => {
   };
 };
 
-const load = (html: string | CheerioStatic, url?: string) => {
-  html = html || "";
+const load = (htmlP: string | CheerioStatic, url?: string) => {
+  const html = htmlP || "";
   let $ = typeof html !== "string" ? html : cheerio.load(html);
   if (url) $ = absolutes(url, $);
   return $;
@@ -278,7 +278,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
             // Handle the empty result set (thanks @jenbennings!)
             if (!pending) return next(null, out);
 
-            return $scope.each((i: number, _el: CheerioElement) => {
+            return $scope.each((i: number) => {
               const $innerscope = $scope.eq(i);
               const node = xray(scope, v[0]);
               node($innerscope, (err: Error, obj: any) => {

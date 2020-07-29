@@ -55,8 +55,9 @@ function absolute(path: string, $: CheerioStatic) {
   let remote = parts.protocol + "//" + parts.host;
   // apply <base> tag transformation
   const base = $("head").find("base");
+  let href: string | undefined;
   if (base.length === 1) {
-    var href = base.attr("href");
+    href = base.attr("href");
     if (href) {
       remote = href;
     }

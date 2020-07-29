@@ -40,8 +40,8 @@ const compact = (arr: string[][]) => {
 /**
  * Check if the string is HTML
  */
-const isHTML = (str: string) => {
-  str = (str || "").toString().trim();
+const isHTML = (strP: string) => {
+  const str = (strP || "").toString().trim();
   return str[0] === "<" && str[str.length - 1] === ">";
 };
 

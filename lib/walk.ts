@@ -22,11 +22,11 @@ import { Selector } from "./params";
 export function walk(
   value: Selector,
   fn: (value: Selector, key?: string, next?: any) => any,
-  done: (err: Error | null, value?: string | object) => any,
+  done: (err: Error | null, value?: string | any) => any,
   key?: string
 ) {
   const batch = Batch();
-  let out: string | object;
+  let out: string | any;
 
   if (isObject(value)) {
     out = {};

@@ -2,7 +2,7 @@
  * Module Dependencies
  */
 
-const sts = require("stream-to-string");
+import sts from "stream-to-string";
 
 /**
  * Convert a readStream from xray.stream() into
@@ -11,18 +11,6 @@ const sts = require("stream-to-string");
  * @param {Stream} strem
  * @return {Promise}
  */
-export const streamToPromise = (stream: object) => {
-  return new Promise(function (resolve, reject) {
-    sts(stream, (err: Error, resStr: string) => {
-      if (err) {
-        reject(err);
-      } else {
-        try {
-          resolve(JSON.parse(resStr));
-        } catch (e) {
-          reject(e);
-        }
-      }
-    });
-  });
+export const streamToPromise = (stream: NodeJS.ReadableStream) => {
+  return sts(stream).then(JSON.parse);
 };

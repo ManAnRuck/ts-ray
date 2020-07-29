@@ -7,7 +7,10 @@ import { isArray } from "./util";
  * @return {Function}
  */
 export const array = (stream: any) => {
-  if (!stream) return function () {};
+  if (!stream)
+    return function () {
+      // empty
+    };
   let first = true;
 
   return function _stream_array(data: any, end: any) {
@@ -40,7 +43,10 @@ export const array = (stream: any) => {
  * @return {Function}
  */
 export const object = (stream: any) => {
-  if (!stream) return function () {};
+  if (!stream)
+    return function () {
+      // empty
+    };
 
   return (data: any, end: any) => {
     const json = JSON.stringify(data, null, 2);
