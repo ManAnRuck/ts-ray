@@ -14,15 +14,19 @@ export interface ParamsResult {
   selector: Selector;
 }
 
+type FinalFunction = (err: Error, result: any) => any;
+
 export type xRayFn = (
-  source: any,
-  scope?: any,
-  selector?: SelectorObject | SelectorObject[] | undefined
+  source: Selector | Cheerio | CheerioStatic | FinalFunction,
+  scope?: Selector | any,
+  selector?: SelectorObject | SelectorObject[] | SelectorArray[] | undefined
 ) => Node;
 
 export interface SelectorObject {
   [name: string]: Selector;
 }
+
+export type SelectorArray = Selector[] | SelectorArray[];
 
 export type Selector =
   | SelectorObject

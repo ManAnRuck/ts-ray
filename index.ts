@@ -4,7 +4,7 @@ import absolutes from "./lib/absolutes";
 import streamHelper from "./lib/stream";
 import Crawler from "x-ray-crawler";
 import { resolve, Filters } from "./lib/resolve";
-import { params, Selector, xRayFn } from "./lib/params";
+import { params, xRayFn } from "./lib/params";
 import { walk } from "./lib/walk";
 import Debug from "debug";
 import cheerio from "cheerio";
@@ -62,11 +62,7 @@ export default (xOptions?: Options) => {
   const options = xOptions || {};
   const filters = options.filters || {};
 
-  const xray = (
-    sourceP: Selector | Cheerio | CheerioStatic,
-    scopeP?: Selector,
-    selectorP?: Selector
-  ): Node => {
+  const xray: xRayFn = (sourceP, scopeP, selectorP) => {
     debug("xray params: %j", {
       source: sourceP,
       scope: scopeP,
@@ -86,7 +82,7 @@ export default (xOptions?: Options) => {
 
     const request = Request(crawler);
 
-    const node: Node = (source2: any, fnP?: any): Node => {
+    const node: Node = (source2, fnP) => {
       let fn = fnP;
       if (!fnP) {
         fn = source2;
