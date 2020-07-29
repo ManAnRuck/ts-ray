@@ -14,7 +14,7 @@ describe("absolute URLs", function () {
   it("should not convert URL", function () {
     const $el = cheerio.load('<a href="http://example.com/bar.html"></a>');
     assert.equal(
-      '<a href="http://example.com/bar.html"></a>',
+      '<html><head></head><body><a href="http://example.com/bar.html"></a></body></html>',
       absolute(path, $el).html()
     );
   });
@@ -22,7 +22,7 @@ describe("absolute URLs", function () {
   it("should convert absolute URL", function () {
     const $el = cheerio.load('<a href="/bar.html"></a>');
     assert.equal(
-      '<a href="http://example.com/bar.html"></a>',
+      '<html><head></head><body><a href="http://example.com/bar.html"></a></body></html>',
       absolute(path, $el).html()
     );
   });
@@ -30,7 +30,7 @@ describe("absolute URLs", function () {
   it("should convert relative URL", function () {
     const $el = cheerio.load('<a href="bar.html"></a>');
     assert.equal(
-      '<a href="http://example.com/bar.html"></a>',
+      '<html><head></head><body><a href="http://example.com/bar.html"></a></body></html>',
       absolute(path, $el).html()
     );
   });
@@ -44,13 +44,14 @@ describe("absolute URLs", function () {
 });
 
 describe("absolute URLs with <base> tag", function () {
-  const head = '<head><base href="http://example.com/foo/"></head>';
+  const head = '<html><head><base href="http://example.com/foo/"></head>';
   const path = "http://example.com/foo.html";
 
   it("should convert relative URL", function () {
     const $el = cheerio.load(head + '<a href="foobar.html"></a>');
     assert.equal(
-      head + '<a href="http://example.com/foo/foobar.html"></a>',
+      head +
+        '<body><a href="http://example.com/foo/foobar.html"></a></body></html>',
       absolute(path, $el).html()
     );
   });
@@ -58,7 +59,8 @@ describe("absolute URLs with <base> tag", function () {
   it("should not convert relative URL starting with /", function () {
     const $el = cheerio.load(head + '<a href="/foobar.html"></a>');
     assert.equal(
-      head + '<a href="http://example.com/foobar.html"></a>',
+      head +
+        '<body><a href="http://example.com/foobar.html"></a></body></html>',
       absolute(path, $el).html()
     );
   });
