@@ -1,4 +1,4 @@
-![x-ray](https://cldup.com/fMBbTcVtwB.png)
+![x-ray](https://raw.githubusercontent.com/ManAnRuck/ts-ray/master/logo.png)
 
 ![Last version](https://img.shields.io/github/tag/matthewmueller/x-ray.svg?style=flat-square)
 [![Build Status](http://img.shields.io/travis/matthewmueller/x-ray/master.svg?style=flat-square)](https://travis-ci.org/matthewmueller/x-ray)
@@ -12,24 +12,24 @@
 [![Gitter](https://badges.gitter.im/lapwinglabs/x-ray.svg)](https://gitter.im/lapwinglabs/x-ray?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ```js
-var Xray = require('x-ray')
-var x = Xray()
+var Xray = require("ts-ray");
+var x = Xray();
 
-x('https://blog.ycombinator.com/', '.post', [
+x("https://blog.ycombinator.com/", ".post", [
   {
-    title: 'h1 a',
-    link: '.article-title@href'
-  }
+    title: "h1 a",
+    link: ".article-title@href",
+  },
 ])
-  .paginate('.nav-previous a@href')
+  .paginate(".nav-previous a@href")
   .limit(3)
-  .write('results.json')
+  .write("results.json");
 ```
 
 ## Installation
 
 ```
-npm install x-ray
+npm install ts-ray
 ```
 
 ## Features
@@ -59,27 +59,30 @@ Here are a few examples:
 - Scrape a single tag
 
 ```js
-xray('http://google.com', 'title')(function(err, title) {
-  console.log(title) // Google
-})
+xray(
+  "http://google.com",
+  "title"
+)(function (err, title) {
+  console.log(title); // Google
+});
 ```
 
 - Scrape a single class
 
 ```js
-xray('http://reddit.com', '.content')(fn)
+xray("http://reddit.com", ".content")(fn);
 ```
 
 - Scrape an attribute
 
 ```js
-xray('http://techcrunch.com', 'img.logo@src')(fn)
+xray("http://techcrunch.com", "img.logo@src")(fn);
 ```
 
 - Scrape `innerHTML`
 
 ```js
-xray('http://news.ycombinator.com', 'body@html')(fn)
+xray("http://news.ycombinator.com", "body@html")(fn);
 ```
 
 ### xray(url, scope, selector)
@@ -91,10 +94,14 @@ You can also supply a `scope` to each `selector`. In jQuery, this would look som
 Instead of a url, you can also supply raw HTML and all the same semantics apply.
 
 ```js
-var html = '<body><h2>Pear</h2></body>'
-x(html, 'body', 'h2')(function(err, header) {
-  header // => Pear
-})
+var html = "<body><h2>Pear</h2></body>";
+x(
+  html,
+  "body",
+  "h2"
+)(function (err, header) {
+  header; // => Pear
+});
 ```
 
 ## API
@@ -111,13 +118,13 @@ Specify a `driver` to make requests through. Available drivers include:
 Returns Readable Stream of the data. This makes it easy to build APIs around x-ray. Here's an example with Express:
 
 ```js
-var app = require('express')()
-var x = require('x-ray')()
+var app = require("express")();
+var x = require("ts-ray")();
 
-app.get('/', function(req, res) {
-  var stream = x('http://google.com', 'title').stream()
-  stream.pipe(res)
-})
+app.get("/", function (req, res) {
+  var stream = x("http://google.com", "title").stream();
+  stream.pipe(res);
+});
 ```
 
 ### xray.write([path])
@@ -131,20 +138,20 @@ If no path is provided, then the behavior is the same as [.stream()](#xraystream
 Constructs a `Promise` object and invoke its `then` function with a callback `cb`. Be sure to invoke `then()` at the last step of xray method chaining, since the other methods are not promisified.
 
 ```js
-x('https://dribbble.com', 'li.group', [
+x("https://dribbble.com", "li.group", [
   {
-    title: '.dribbble-img strong',
-    image: '.dribbble-img [data-src]@data-src'
-  }
+    title: ".dribbble-img strong",
+    image: ".dribbble-img [data-src]@data-src",
+  },
 ])
-  .paginate('.next_page@href')
+  .paginate(".next_page@href")
   .limit(3)
-  .then(function(res) {
-    console.log(res[0]) // prints first result
+  .then(function (res) {
+    console.log(res[0]); // prints first result
   })
-  .catch(function(err) {
-    console.log(err) // handle error in promise
-  })
+  .catch(function (err) {
+    console.log(err); // handle error in promise
+  });
 ```
 
 ### xray.paginate(selector)
@@ -193,37 +200,37 @@ X-ray becomes more powerful when you start composing instances together. Here ar
 ### Crawling to another site
 
 ```js
-var Xray = require('x-ray')
-var x = Xray()
+var Xray = require("ts-ray");
+var x = Xray();
 
-x('http://google.com', {
-  main: 'title',
-  image: x('#gbar a@href', 'title') // follow link to google images
-})(function(err, obj) {
+x("http://google.com", {
+  main: "title",
+  image: x("#gbar a@href", "title"), // follow link to google images
+})(function (err, obj) {
   /*
   {
     main: 'Google',
     image: 'Google Images'
   }
 */
-})
+});
 ```
 
 ### Scoping a selection
 
 ```js
-var Xray = require('x-ray')
-var x = Xray()
+var Xray = require("ts-ray");
+var x = Xray();
 
-x('http://mat.io', {
-  title: 'title',
-  items: x('.item', [
+x("http://mat.io", {
+  title: "title",
+  items: x(".item", [
     {
-      title: '.item-content h2',
-      description: '.item-content section'
-    }
-  ])
-})(function(err, obj) {
+      title: ".item-content h2",
+      description: ".item-content section",
+    },
+  ]),
+})(function (err, obj) {
   /*
   {
     title: 'mat.io',
@@ -235,7 +242,7 @@ x('http://mat.io', {
     ]
   }
 */
-})
+});
 ```
 
 ### Filters
@@ -243,35 +250,32 @@ x('http://mat.io', {
 Filters can specified when creating a new Xray instance. To apply filters to a value, append them to the selector using `|`.
 
 ```js
-var Xray = require('x-ray')
+var Xray = require("ts-ray");
 var x = Xray({
   filters: {
-    trim: function(value) {
-      return typeof value === 'string' ? value.trim() : value
+    trim: function (value) {
+      return typeof value === "string" ? value.trim() : value;
     },
-    reverse: function(value) {
-      return typeof value === 'string'
-        ? value
-            .split('')
-            .reverse()
-            .join('')
-        : value
+    reverse: function (value) {
+      return typeof value === "string"
+        ? value.split("").reverse().join("")
+        : value;
     },
-    slice: function(value, start, end) {
-      return typeof value === 'string' ? value.slice(start, end) : value
-    }
-  }
-})
+    slice: function (value, start, end) {
+      return typeof value === "string" ? value.slice(start, end) : value;
+    },
+  },
+});
 
-x('http://mat.io', {
-  title: 'title | trim | reverse | slice:2,3'
-})(function(err, obj) {
+x("http://mat.io", {
+  title: "title | trim | reverse | slice:2,3",
+})(function (err, obj) {
   /*
   {
     title: 'oi'
   }
 */
-})
+});
 ```
 
 ## Examples
