@@ -25,13 +25,13 @@ export function walk(
   done: (err: Error | null, value?: string | object) => any,
   key?: string
 ) {
-  var batch = Batch();
-  var out: string | object;
+  const batch = Batch();
+  let out: string | object;
 
   if (isObject(value)) {
     out = {};
     Object.keys(value).forEach(function (k) {
-      var v = (value as any)[k];
+      const v = (value as any)[k];
       batch.push((next: any) => {
         walk(
           v,

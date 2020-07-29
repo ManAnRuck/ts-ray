@@ -13,9 +13,9 @@ import { isStringArray } from "./lib/typeGuards";
 
 const debug = Debug("ts-ray");
 
-var fs = require("fs");
+const fs = require("fs");
 
-var CONST: {
+const CONST: {
   CRAWLER_METHODS: string[];
   INIT_STATE: State;
 } = {
@@ -52,7 +52,7 @@ export interface State {
 export default (xOptions?: Options) => {
   const crawler = Crawler();
   const options = xOptions || {};
-  var filters = options.filters || {};
+  const filters = options.filters || {};
 
   const xray = (
     source: Selector | Cheerio | CheerioStatic,
@@ -64,19 +64,19 @@ export default (xOptions?: Options) => {
       scope: scope,
       selector: selector,
     });
-    var args = params(source, scope, selector);
+    const args = params(source, scope, selector);
     selector = args.selector;
     source = args.source;
     scope = args.context;
 
-    var state: State = { ...CONST.INIT_STATE };
-    var store = enstore();
-    var pages: any[] = [];
-    var stream: any;
+    const state: State = { ...CONST.INIT_STATE };
+    const store = enstore();
+    let pages: any[] = [];
+    let stream: any;
 
-    var walkHTML = WalkHTML(xray, selector, scope, filters);
+    const walkHTML = WalkHTML(xray, selector, scope, filters);
 
-    var request = Request(crawler);
+    const request = Request(crawler);
 
     const node = function (source2: any, fn?: any) {
       if (!fn) {
@@ -93,8 +93,8 @@ export default (xOptions?: Options) => {
 
       const next = (err: Error, obj?: any, $?: CheerioStatic) => {
         if (err) return fn(err);
-        var paginate = state.paginate;
-        var limit = --(state.limit as number);
+        const paginate = state.paginate;
+        const limit = --(state.limit as number);
 
         // create the stream
         if (!stream) {
@@ -115,7 +115,7 @@ export default (xOptions?: Options) => {
             return fn(null, pages);
           }
 
-          var url = resolve($!, false, paginate, filters);
+          const url = resolve($!, false, paginate, filters);
           debug("paginate(%j) => %j", paginate, url);
 
           if (!isUrl(url)) {
@@ -142,7 +142,7 @@ export default (xOptions?: Options) => {
 
           request(url, (err: Error, html: string) => {
             if (err) return next(err);
-            var $ = load(html, url);
+            const $ = load(html, url);
             walkHTML($, next);
           });
         } else {
@@ -155,12 +155,12 @@ export default (xOptions?: Options) => {
         debug("starting at: %s", source);
         request(source, (err: Error, html: string) => {
           if (err) return next(err);
-          var $ = load(html, source as string);
+          const $ = load(html, source as string);
           walkHTML($, next);
         });
       } else if (typeof scope === "string" && ~scope.indexOf("@")) {
         debug("resolving to a url: %s", scope);
-        var url = resolve(source as any, false, scope, filters);
+        const url = resolve(source as any, false, scope, filters);
 
         // ensure that a@href is a URL
         if (!isUrl(url)) {
@@ -171,11 +171,11 @@ export default (xOptions?: Options) => {
         debug('resolved "%s" to a %s', scope, url);
         request(url, (err: Error, html: string) => {
           if (err) return next(err);
-          var $ = load(html, url);
+          const $ = load(html, url);
           walkHTML($, next);
         });
       } else if (source) {
-        var $ = load(source as string | CheerioStatic);
+        const $ = load(source as string | CheerioStatic);
         walkHTML($, next);
       } else {
         debug("%s is not a url or html. Skipping!", source);
@@ -205,7 +205,7 @@ export default (xOptions?: Options) => {
 
     node.stream = () => {
       state.stream = store.createWriteStream();
-      var rs = store.createReadStream();
+      const rs = store.createReadStream();
       streamHelper.waitCb(rs, node);
       return rs;
     };
@@ -249,7 +249,7 @@ const Request = (crawler: Crawler.Instance) => {
 
 const load = (html: string | CheerioStatic, url?: string) => {
   html = html || "";
-  var $ = typeof html !== "string" ? html : cheerio.load(html);
+  let $ = typeof html !== "string" ? html : cheerio.load(html);
   if (url) $ = absolutes(url, $);
   return $;
 };
@@ -260,7 +260,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
       selector,
       (v, _k, next) => {
         if (typeof v === "string") {
-          var value = resolve($, root(scope), v, filters);
+          const value = resolve($, root(scope), v, filters);
           return next(null, value);
         } else if (typeof v === "function") {
           return v($, (err: Error, obj: any) => {
@@ -271,16 +271,16 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
           if (isStringArray(v)) {
             return next(null, resolve($, root(scope), v, filters));
           } else if (typeof v[0] === "object") {
-            var $scope = "find" in $ ? ($ as Cheerio).find(scope) : $(scope);
-            var pending = $scope.length;
-            var out: any[] = [];
+            const $scope = "find" in $ ? ($ as Cheerio).find(scope) : $(scope);
+            let pending = $scope.length;
+            const out: any[] = [];
 
             // Handle the empty result set (thanks @jenbennings!)
             if (!pending) return next(null, out);
 
             return $scope.each((i: number, _el: CheerioElement) => {
-              var $innerscope = $scope.eq(i);
-              var node = xray(scope, v[0]);
+              const $innerscope = $scope.eq(i);
+              const node = xray(scope, v[0]);
               node($innerscope, (err: Error, obj: any) => {
                 if (err) return next(err);
                 out[i] = obj;

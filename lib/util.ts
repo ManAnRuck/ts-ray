@@ -32,7 +32,7 @@ const compact = (arr: string[][]) => {
   return arr.filter(function (val) {
     if (!val) return false;
     if (val.length !== undefined) return val.length !== 0;
-    for (var key in val) if (has.call(val, key)) return true;
+    for (const key in val) if (has.call(val, key)) return true;
     return false;
   });
 };

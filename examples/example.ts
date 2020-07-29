@@ -1,5 +1,5 @@
 import Xray from "..";
-var x = Xray();
+const x = Xray();
 
 x("http://google.com", {
   main: "title",

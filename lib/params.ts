@@ -44,7 +44,7 @@ export const params = (
   context?: string | Selector,
   selector?: Selector
 ) => {
-  var args: ParamsResult = {
+  const args: ParamsResult = {
     selector: source,
   };
   if (undefined === context) {

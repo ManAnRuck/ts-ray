@@ -14,7 +14,7 @@ export default absolute;
  * Selector
  */
 
-var selector = [
+const selector = [
   "a[href]",
   "img[src]",
   "script[src]",
@@ -51,10 +51,10 @@ function isValidUrl(src: string) {
  */
 
 function absolute(path: string, $: CheerioStatic) {
-  var parts = parse(path);
-  var remote = parts.protocol + "//" + parts.host;
+  const parts = parse(path);
+  let remote = parts.protocol + "//" + parts.host;
   // apply <base> tag transformation
-  var base = $("head").find("base");
+  const base = $("head").find("base");
   if (base.length === 1) {
     var href = base.attr("href");
     if (href) {
@@ -64,12 +64,12 @@ function absolute(path: string, $: CheerioStatic) {
   $(selector).each(abs);
 
   function abs(_i: number, el: CheerioElement) {
-    var $el = $(el);
-    var key = null;
-    var src = null;
+    const $el = $(el);
+    let key = null;
+    let src = null;
 
-    var hasHref = $el.attr("href");
-    var hashSrc = $el.attr("src");
+    const hasHref = $el.attr("href");
+    const hashSrc = $el.attr("src");
 
     if (hasHref) {
       key = "href";
@@ -86,7 +86,7 @@ function absolute(path: string, $: CheerioStatic) {
     if (~src.indexOf("://")) {
       return;
     } else if (isValidUrl(src)) {
-      var current;
+      let current;
       if (href && src.indexOf("/") !== 0) {
         current = resolve(remote, href);
         src = resolve(current, src);

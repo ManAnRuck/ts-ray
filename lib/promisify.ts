@@ -2,7 +2,7 @@
  * Module Dependencies
  */
 
-var sts = require("stream-to-string");
+const sts = require("stream-to-string");
 
 /**
  * Convert a readStream from xray.stream() into

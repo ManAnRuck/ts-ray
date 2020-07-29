@@ -2,9 +2,9 @@ import path from "path";
 import { readFileSync as read } from "fs";
 import Xray from "../..";
 
-var html = read(path.resolve(__dirname, "index.html"), "utf-8");
+const html = read(path.resolve(__dirname, "index.html"), "utf-8");
 
-var x = Xray();
+const x = Xray();
 
 x(html, ".item", [
   {

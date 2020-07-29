@@ -23,8 +23,8 @@ import Xray from "..";
  * since it is sorted by created date.
  */
 
-var url = "http://lapwinglabs.github.io/static/";
-var pagedUrl =
+const url = "http://lapwinglabs.github.io/static/";
+const pagedUrl =
   "https://github.com/lapwinglabs/x-ray/issues?q=is%3Aissue%20sort%3Acreated-asc%20";
 
 /**
@@ -33,7 +33,7 @@ var pagedUrl =
 
 describe("Xray basics", function () {
   it("should work with the kitchen sink", function (done) {
-    var x = Xray();
+    const x = Xray();
     x({
       title: "title@text",
       image: x("#gbar a@href", "title"),
@@ -52,7 +52,7 @@ describe("Xray basics", function () {
   });
 
   it("should work with embedded x-ray instances", function (done) {
-    var x = Xray();
+    const x = Xray();
 
     x({
       list: x("body", {
@@ -71,7 +71,7 @@ describe("Xray basics", function () {
   });
 
   it("should work without passing a URL in the callback", function (done) {
-    var x = Xray();
+    const x = Xray();
     x("http://google.com", {
       title: "title",
     })(function (err: Error, obj: any) {
@@ -84,7 +84,7 @@ describe("Xray basics", function () {
   });
 
   it("should work passing neither a valid URL nor valid HTML", function (done) {
-    var x = Xray();
+    const x = Xray();
     x("garbageIn", {
       title: "title",
     })(function (err: Error, obj: any) {
@@ -95,7 +95,7 @@ describe("Xray basics", function () {
   });
 
   it("should work with arrays", function (done) {
-    var x = Xray();
+    const x = Xray();
 
     x(url, ["a@href"])(function (err: Error, arr: any) {
       if (err) return done(err);
@@ -109,7 +109,7 @@ describe("Xray basics", function () {
   });
 
   it("should work with an array without a url", function (done) {
-    var x = Xray();
+    const x = Xray();
 
     x(["a@href"])(url, function (err: Error, arr: any) {
       if (err) return done(err);
@@ -123,7 +123,7 @@ describe("Xray basics", function () {
   });
 
   it("arrays should work with a simple selector", function (done) {
-    var x = Xray();
+    const x = Xray();
 
     x("a", [{ link: "@href" }])(url, function (err: Error, arr: any) {
       if (err) return done(err);
@@ -137,10 +137,10 @@ describe("Xray basics", function () {
   });
 
   it("should select items with a scope", function (done) {
-    var html =
+    const html =
       '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
-    var $ = cheerio.load(html);
-    var x = Xray();
+    const $ = cheerio.load(html);
+    const x = Xray();
     x(".tags", ["li"])($, function (err: Error, arr: any) {
       if (err) return done(err);
       assert.equal(5, arr.length);
@@ -154,10 +154,10 @@ describe("Xray basics", function () {
   });
 
   it("should select lists separately too", function (done) {
-    var html =
+    const html =
       '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
-    var $ = cheerio.load(html);
-    var x = Xray();
+    const $ = cheerio.load(html);
+    const x = Xray();
 
     x(".tags", [["li"]])($, function (err: Error, arr: any) {
       if (err) return done(err);
@@ -173,7 +173,7 @@ describe("Xray basics", function () {
   });
 
   it("should select collections within collections", function (done) {
-    var html = m(function () {
+    const html = m(function () {
       /*
       <div class="items">
         <div class="item">
@@ -195,8 +195,8 @@ describe("Xray basics", function () {
     */
     }); // eslint-disable-line
 
-    var $ = cheerio.load(html);
-    var x = Xray();
+    const $ = cheerio.load(html);
+    const x = Xray();
 
     x($, ".item", [
       {
@@ -219,7 +219,7 @@ describe("Xray basics", function () {
   // TODO: Rewrite test, mat.io hasn't the same content.
   xit("should work with complex selections", function (done) {
     this.timeout(10000);
-    var x = Xray();
+    const x = Xray();
     x("http://mat.io", {
       title: "title",
       items: x(".item", [
@@ -264,10 +264,10 @@ describe("Xray basics", function () {
   });
 
   it("should apply filters", function (done) {
-    var html =
+    const html =
       '<h3> All Tags </h3><ul class="tags"><li> a</li><li> b </li><li>c </li></ul><ul class="tags"><li>\nd</li><li>e</li></ul>';
-    var $ = cheerio.load(html);
-    var x = Xray({
+    const $ = cheerio.load(html);
+    const x = Xray({
       filters: {
         trim: function (value) {
           return typeof value === "string" ? value.trim() : value;
@@ -302,9 +302,9 @@ describe("Xray basics", function () {
   // with pages
   it("should work with pagination & limits", function (done) {
     this.timeout(10000);
-    var x = Xray();
+    const x = Xray();
 
-    var xray = x("https://blog.ycombinator.com/", ".post", [
+    const xray = x("https://blog.ycombinator.com/", ".post", [
       {
         title: "h1 a",
         link: ".article-title@href",
@@ -327,9 +327,9 @@ describe("Xray basics", function () {
 
   it("should work with pagination & abort function checking returned object", function (done) {
     this.timeout(10000);
-    var x = Xray();
+    const x = Xray();
 
-    var xray = x(pagedUrl, ".js-issue-row", [
+    const xray = x(pagedUrl, ".js-issue-row", [
       {
         id: "@id",
         title: "a.h4",
@@ -338,7 +338,7 @@ describe("Xray basics", function () {
       .paginate(".next_page@href")
       .limit(3)
       .abort(function (result: any) {
-        var i = 0;
+        let i = 0;
 
         // Issue 40 is on page 2 of our result set
         for (; i < result.length; i++) {
@@ -363,9 +363,9 @@ describe("Xray basics", function () {
 
   it("should work with pagination & abort function checking next URL", function (done) {
     this.timeout(10000);
-    var x = Xray();
+    const x = Xray();
 
-    var xray = x(pagedUrl, ".js-issue-row", [
+    const xray = x(pagedUrl, ".js-issue-row", [
       {
         id: "@id",
         title: "a.h4",
@@ -396,8 +396,8 @@ describe("Xray basics", function () {
   it("should not call function twice when reaching the last page", function (done) {
     this.timeout(10000);
     setTimeout(done, 9000);
-    var timesCalled = 0;
-    var x = Xray();
+    let timesCalled = 0;
+    const x = Xray();
 
     x("https://github.com/lapwinglabs/x-ray/watchers", ".follow-list-item", [
       {
@@ -421,16 +421,16 @@ describe("Xray basics", function () {
 
   describe(".stream() === .write()", function () {
     it("write should work with streams", function (done) {
-      var html =
+      const html =
         '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
-      var $ = cheerio.load(html);
-      var x = Xray();
+      const $ = cheerio.load(html);
+      const x = Xray();
 
-      var xray = x($, ".tags", [["li"]]);
+      const xray = x($, ".tags", [["li"]]);
 
       xray.stream().pipe(
         concat(function (data) {
-          var arr = JSON.parse(data.toString());
+          const arr = JSON.parse(data.toString());
           assert(arr[0].length === 3);
           assert(arr[0][0] === "a");
           assert(arr[0][1] === "b");
@@ -445,9 +445,9 @@ describe("Xray basics", function () {
 
     it("write should work with pagination", function (done) {
       this.timeout(10000);
-      var x = Xray();
+      const x = Xray();
 
-      var xray = x("https://blog.ycombinator.com/", ".post", [
+      const xray = x("https://blog.ycombinator.com/", ".post", [
         {
           title: "h1 a",
           link: ".article-title@href",
@@ -458,7 +458,7 @@ describe("Xray basics", function () {
 
       xray.stream().pipe(
         concat(function (buff) {
-          var arr = JSON.parse(buff.toString());
+          const arr = JSON.parse(buff.toString());
 
           assert(arr.length, "array should have a length");
 
@@ -474,16 +474,16 @@ describe("Xray basics", function () {
 
   describe(".write(file)", function () {
     it("should stream to a file", function (done) {
-      var path = join(__dirname, "tags.json");
-      var html =
+      const path = join(__dirname, "tags.json");
+      const html =
         '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
-      var $ = cheerio.load(html);
-      var x = Xray();
+      const $ = cheerio.load(html);
+      const x = Xray();
 
       x($, ".tags", [["li"]])
         .write(path)
         .on("finish", function () {
-          var arr = JSON.parse(read(path, "utf8"));
+          const arr = JSON.parse(read(path, "utf8"));
           assert(arr[0].length === 3);
           assert(arr[0][0] === "a");
           assert(arr[0][1] === "b");
@@ -496,9 +496,9 @@ describe("Xray basics", function () {
         });
     });
     it("stream to a file with pagination", function (done) {
-      var path = join(__dirname, "pagination.json");
+      const path = join(__dirname, "pagination.json");
       this.timeout(10000);
-      var x = Xray();
+      const x = Xray();
 
       x("https://blog.ycombinator.com/", ".post", [
         {
@@ -510,7 +510,7 @@ describe("Xray basics", function () {
         .limit(3)
         .write(path)
         .on("finish", function () {
-          var arr = JSON.parse(read(path, "utf8"));
+          const arr = JSON.parse(read(path, "utf8"));
           assert(arr.length, "array should have a length");
           arr.forEach(function (item: any) {
             assert(item.title.length);
@@ -523,22 +523,22 @@ describe("Xray basics", function () {
   });
 
   describe(".then(cb, err)", function () {
-    var noop = function () {};
-    var html =
+    const noop = function () {};
+    const html =
       '<ul class="tags"><li>a</li><li>b</li><li>c</li></ul><ul class="tags"><li>d</li><li>e</li></ul>';
-    var expected = [
+    const expected = [
       ["a", "b", "c"],
       ["d", "e"],
     ];
-    var $ = cheerio.load(html);
-    var x = Xray();
+    const $ = cheerio.load(html);
+    const x = Xray();
 
     it("should Promisify and pass cb to promise", function () {
-      var resHandler = sinon.fake();
-      var errorHandler = sinon.fake();
+      const resHandler = sinon.fake();
+      const errorHandler = sinon.fake();
 
-      var xray = x($, ".tags", [["li"]]);
-      var promise = xray.then(resHandler, errorHandler);
+      const xray = x($, ".tags", [["li"]]);
+      const promise = xray.then(resHandler, errorHandler);
 
       return promise.then(function () {
         assert(resHandler.calledOnce === true, "result handler called once");
@@ -548,12 +548,12 @@ describe("Xray basics", function () {
     });
 
     it("should Promisify and pass rejections to promise", function () {
-      var resHandler = sinon.fake();
-      var errorHandler = sinon.fake();
+      const resHandler = sinon.fake();
+      const errorHandler = sinon.fake();
 
-      var xray = x("https://127.0.0.1:666/", ".tags", [["li"]]);
+      const xray = x("https://127.0.0.1:666/", ".tags", [["li"]]);
       process.once("unhandledRejection", noop);
-      var promise = xray.then(resHandler, errorHandler);
+      const promise = xray.then(resHandler, errorHandler);
 
       return promise.then(function () {
         process.removeListener("unhandledRejection", noop);

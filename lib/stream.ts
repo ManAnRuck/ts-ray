@@ -8,12 +8,12 @@ import { isArray } from "./util";
  */
 export const array = (stream: any) => {
   if (!stream) return function () {};
-  var first = true;
+  let first = true;
 
   return function _stream_array(data: any, end: any) {
-    var string = JSON.stringify(data, null, 2);
-    var json = isArray(data) ? string.slice(1, -1) : string;
-    var empty = json.trim() === "";
+    const string = JSON.stringify(data, null, 2);
+    const json = isArray(data) ? string.slice(1, -1) : string;
+    const empty = json.trim() === "";
 
     if (first && empty && !end) return;
     if (first) {
@@ -43,7 +43,7 @@ export const object = (stream: any) => {
   if (!stream) return function () {};
 
   return (data: any, end: any) => {
-    var json = JSON.stringify(data, null, 2);
+    const json = JSON.stringify(data, null, 2);
 
     if (end) {
       stream.end(json);

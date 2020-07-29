@@ -9,10 +9,10 @@ import cheerio from "cheerio";
 import assert from "assert";
 
 describe("absolute URLs", function () {
-  var path = "http://example.com/foo.html";
+  const path = "http://example.com/foo.html";
 
   it("should not convert URL", function () {
-    var $el = cheerio.load('<a href="http://example.com/bar.html"></a>');
+    const $el = cheerio.load('<a href="http://example.com/bar.html"></a>');
     assert.equal(
       '<a href="http://example.com/bar.html"></a>',
       absolute(path, $el).html()
@@ -20,7 +20,7 @@ describe("absolute URLs", function () {
   });
 
   it("should convert absolute URL", function () {
-    var $el = cheerio.load('<a href="/bar.html"></a>');
+    const $el = cheerio.load('<a href="/bar.html"></a>');
     assert.equal(
       '<a href="http://example.com/bar.html"></a>',
       absolute(path, $el).html()
@@ -28,7 +28,7 @@ describe("absolute URLs", function () {
   });
 
   it("should convert relative URL", function () {
-    var $el = cheerio.load('<a href="bar.html"></a>');
+    const $el = cheerio.load('<a href="bar.html"></a>');
     assert.equal(
       '<a href="http://example.com/bar.html"></a>',
       absolute(path, $el).html()
@@ -36,7 +36,7 @@ describe("absolute URLs", function () {
   });
 
   it("should not throw when encountering invalid URLs", function () {
-    var $el = cheerio.load(
+    const $el = cheerio.load(
       '<html><body><ul><li><a href="mailto:%CAbroken@link.com">Broken link</a></li></ul></body></html>'
     );
     absolute(path, $el);
@@ -44,11 +44,11 @@ describe("absolute URLs", function () {
 });
 
 describe("absolute URLs with <base> tag", function () {
-  var head = '<head><base href="http://example.com/foo/"></head>';
-  var path = "http://example.com/foo.html";
+  const head = '<head><base href="http://example.com/foo/"></head>';
+  const path = "http://example.com/foo.html";
 
   it("should convert relative URL", function () {
-    var $el = cheerio.load(head + '<a href="foobar.html"></a>');
+    const $el = cheerio.load(head + '<a href="foobar.html"></a>');
     assert.equal(
       head + '<a href="http://example.com/foo/foobar.html"></a>',
       absolute(path, $el).html()
@@ -56,7 +56,7 @@ describe("absolute URLs with <base> tag", function () {
   });
 
   it("should not convert relative URL starting with /", function () {
-    var $el = cheerio.load(head + '<a href="/foobar.html"></a>');
+    const $el = cheerio.load(head + '<a href="/foobar.html"></a>');
     assert.equal(
       head + '<a href="http://example.com/foobar.html"></a>',
       absolute(path, $el).html()

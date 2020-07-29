@@ -12,7 +12,9 @@
     "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly",
     "pretest": "standard",
     "test": "ts-mocha test/**/*_spec.ts",
-    "lint": "tsc --noEmit"
+    "lint": "yarn lint:ts && yarn lint:es",
+    "lint:ts": "tsc --noEmit",
+    "lint:es": "eslint . --ext .ts --fix"
   },
   "contributors": [
     "Paul Barrett",
@@ -62,7 +64,10 @@
     "@types/rimraf": "^3.0.0",
     "@types/sinon": "^9.0.4",
     "@types/x-ray-crawler": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
     "coveralls": "3.0.6",
+    "eslint": "^7.5.0",
     "istanbul": "0.4.5",
     "mocha": "~6.1.4",
     "mocha-lcov-reporter": "1.3.0",

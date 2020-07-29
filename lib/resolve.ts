@@ -4,7 +4,7 @@
 import Debug from "debug";
 import { isArray } from "./util";
 import { Selector } from "./params";
-var parse = require("x-ray-parse");
+const parse = require("x-ray-parse");
 
 const debug = Debug("resolve");
 
@@ -31,8 +31,8 @@ export function resolve(
   // console.log("XXX", typeof selector, selector);
   debug("resolve($j, %j)", scope, selector);
   filters = filters || {};
-  var array = isArray(selector);
-  var obj = parse(array ? selector[0] : selector);
+  const array = isArray(selector);
+  const obj = parse(array ? selector[0] : selector);
   obj.attribute = obj.attribute || "text";
 
   if (!obj.selector) {
@@ -40,7 +40,7 @@ export function resolve(
     scope = null;
   }
 
-  var value: any = find(
+  let value: any = find(
     $,
     scope,
     array ? [obj.selector] : obj.selector,
@@ -79,8 +79,8 @@ function find(
     var $scope = select($, scope);
     var out: any[] = [];
     $scope.map((i: number) => {
-      var $el = $scope.eq(i);
-      var $children = select($el, selector[0]);
+      const $el = $scope.eq(i);
+      const $children = select($el, selector[0]);
       $children.map((i: number) => {
         out.push(attribute($children.eq(i), attr));
       });
@@ -90,7 +90,7 @@ function find(
     $scope = select($, scope);
     return attribute($scope.find(selector).eq(0), attr);
   } else {
-    var $selector: Cheerio;
+    let $selector: Cheerio;
     if (isArray(selector)) {
       $selector = select($, selector[0]);
       out = [];
@@ -171,12 +171,12 @@ function filter(
   value: string,
   filters: Filters
 ) {
-  var ctx = { $: $, selector: obj.selector, attribute: obj.attribute };
+  const ctx = { $: $, selector: obj.selector, attribute: obj.attribute };
   return (obj.filters || []).reduce((out, filter) => {
-    var fn = filters[filter.name];
+    const fn = filters[filter.name];
     if (typeof fn === "function") {
-      var args = [out].concat(filter.args || []);
-      var filtered = fn.apply(ctx, args);
+      const args = [out].concat(filter.args || []);
+      const filtered = fn.apply(ctx, args);
       debug("%s.apply(ctx, %j) => %j", filter.name, args, filtered);
       return filtered;
     } else {
