@@ -22,11 +22,30 @@ export interface ParamsResult {
   selector: any;
 }
 
+export type xRayFn = (
+  source: any,
+  scope?: any,
+  selector?: SelectorObject | SelectorObject[] | undefined
+) => any;
+
+export interface SelectorObject {
+  [name: string]: Selector;
+}
+
+export type Selector =
+  | SelectorObject
+  | SelectorObject[]
+  | Selector[]
+  | string
+  | string[]
+  | xRayFn;
+
 export function params(
-  source: string | any[] | any,
-  context?: string | any[] | any,
-  selector?: string | any[] | any
+  source: any,
+  context?: string | Selector,
+  selector?: Selector
 ) {
+  // if (source !== undefined) console.log("TsourceT", typeof source, source);
   var args: ParamsResult = {
     selector: source,
   };

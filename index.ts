@@ -1,10 +1,10 @@
-import { isArray, objectAssign, isUrl, compact, root } from "./lib/util";
+import { isArray, isUrl, compact, root } from "./lib/util";
 import { streamToPromise } from "./lib/promisify";
 import absolutes from "./lib/absolutes";
 import streamHelper from "./lib/stream";
 import Crawler from "x-ray-crawler";
 import { resolve } from "./lib/resolve";
-import { params } from "./lib/params";
+import { params, Selector } from "./lib/params";
 import { walk } from "./lib/walk";
 import Debug from "debug";
 import cheerio from "cheerio";
@@ -37,6 +37,14 @@ export interface Options {
   filters: any;
 }
 
+export interface State {
+  stream: boolean;
+  concurrency: number;
+  paginate: boolean;
+  limit: number | ((limit: number) => any);
+  abort: boolean | ((validator: any, url?: string) => any);
+}
+
 export default (xOptions?: Options) => {
   const crawler = Crawler();
   const options = xOptions || ({} as any);
@@ -45,7 +53,7 @@ export default (xOptions?: Options) => {
   const xray = (
     source: string | Cheerio | CheerioAPI | CheerioStatic | any,
     scope?: any,
-    selector?: any
+    selector?: Selector
   ) => {
     debug("xray params: %j", {
       source: source,
@@ -57,7 +65,7 @@ export default (xOptions?: Options) => {
     source = args.source;
     scope = args.context;
 
-    var state = objectAssign({}, CONST.INIT_STATE);
+    var state: State = { ...CONST.INIT_STATE };
     var store = enstore();
     var pages: any[] = [];
     var stream: any;
@@ -67,7 +75,7 @@ export default (xOptions?: Options) => {
     var request = Request(crawler);
 
     const node = function (source2: any, fn?: any) {
-      if (arguments.length === 1) {
+      if (!fn) {
         fn = source2;
       } else {
         source = source2;
@@ -82,7 +90,7 @@ export default (xOptions?: Options) => {
       const next = (err: Error, obj?: any, $?: Cheerio) => {
         if (err) return fn(err);
         var paginate = state.paginate;
-        var limit = --state.limit;
+        var limit = --(state.limit as number);
 
         // create the stream
         if (!stream) {
@@ -112,7 +120,11 @@ export default (xOptions?: Options) => {
             return fn(null, pages);
           }
 
-          if (state.abort && state.abort(obj, url)) {
+          if (
+            state.abort &&
+            typeof state.abort !== "boolean" &&
+            state.abort(obj, url)
+          ) {
             debug("abort check passed, ending");
             stream(obj, true);
             return fn(null, pages);
@@ -169,20 +181,20 @@ export default (xOptions?: Options) => {
       return node;
     };
 
-    node.abort = function (validator: any) {
-      if (!arguments.length) return state.abort;
+    node.abort = (validator: any) => {
+      if (!validator) return state.abort;
       state.abort = validator;
       return node;
     };
 
-    node.paginate = function (paginate?: any) {
-      if (!arguments.length) return state.paginate;
+    node.paginate = (paginate?: any): any => {
+      if (!paginate) return state.paginate;
       state.paginate = paginate;
       return node;
     };
 
-    node.limit = function (limit?: number) {
-      if (!arguments.length) return state.limit;
+    node.limit = (limit?: number) => {
+      if (!limit) return state.limit;
       state.limit = limit;
       return node;
     };
@@ -195,7 +207,7 @@ export default (xOptions?: Options) => {
     };
 
     node.write = function (path?: string) {
-      if (!arguments.length) return node.stream();
+      if (!path) return node.stream();
       state.stream = fs.createWriteStream(path);
       streamHelper.waitCb(state.stream, node);
       return state.stream;
@@ -208,10 +220,11 @@ export default (xOptions?: Options) => {
     return node;
   };
 
-  CONST.CRAWLER_METHODS.forEach(function (method) {
+  CONST.CRAWLER_METHODS.forEach((...args) => {
+    const [method] = args;
     (xray as any)[method] = function () {
-      if (!arguments.length) return (crawler as any)[method]();
-      (crawler as any)[method].apply(crawler, arguments);
+      if (!args.length) return (crawler as any)[method]();
+      (crawler as any)[method].apply(crawler, args);
       return this;
     };
   });

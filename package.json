@@ -58,6 +58,7 @@
     "@types/is-url": "^1.2.28",
     "@types/mocha": "^8.0.0",
     "@types/node": "^14.0.26",
+    "@types/object-assign": "^4.0.30",
     "@types/rimraf": "^3.0.0",
     "@types/sinon": "^9.0.4",
     "@types/x-ray-crawler": "^2.0.0",

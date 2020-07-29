@@ -1,8 +1,9 @@
-var has = Object.prototype.hasOwnProperty;
-var objectAssign = require("object-assign");
-var isObject = require("isobject");
-var isUrl = require("is-url");
-var isArray = Array.isArray;
+import objectAssign from "object-assign";
+import isObject from "isobject";
+import isUrl from "is-url";
+
+const has = Object.prototype.hasOwnProperty;
+const isArray = Array.isArray;
 
 /**
  * Get the root, if there is one.
@@ -14,6 +15,7 @@ const root = (selector: string | string[]) => {
   return (
     (typeof selector === "string" || isArray(selector)) &&
     !~selector.indexOf("@") &&
+    typeof selector === "string" &&
     !isUrl(selector) &&
     selector
   );
