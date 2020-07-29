@@ -45,7 +45,6 @@ export function params(
   context?: string | Selector,
   selector?: Selector
 ) {
-  // if (source !== undefined) console.log("TsourceT", typeof source, source);
   var args: ParamsResult = {
     selector: source,
   };

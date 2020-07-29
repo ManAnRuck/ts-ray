@@ -269,11 +269,13 @@ describe("Xray basics", function () {
     var $ = cheerio.load(html);
     var x = Xray({
       filters: {
-        trim: function (value: any) {
+        trim: function (value) {
           return typeof value === "string" ? value.trim() : value;
         },
-        slice: function (value: any, limit: any) {
-          return typeof value === "string" ? value.slice(0, limit) : value;
+        slice: function (value, limit) {
+          return typeof value === "string"
+            ? value.slice(0, parseInt(limit))
+            : value;
         },
         reverse: function (value: any) {
           return typeof value === "string"

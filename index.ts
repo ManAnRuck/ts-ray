@@ -3,7 +3,7 @@ import { streamToPromise } from "./lib/promisify";
 import absolutes from "./lib/absolutes";
 import streamHelper from "./lib/stream";
 import Crawler from "x-ray-crawler";
-import { resolve } from "./lib/resolve";
+import { resolve, Filters } from "./lib/resolve";
 import { params, Selector } from "./lib/params";
 import { walk } from "./lib/walk";
 import Debug from "debug";
@@ -34,7 +34,7 @@ var CONST = {
 };
 
 export interface Options {
-  filters: any;
+  filters?: Filters;
 }
 
 export interface State {
@@ -47,7 +47,7 @@ export interface State {
 
 export default (xOptions?: Options) => {
   const crawler = Crawler();
-  const options = xOptions || ({} as any);
+  const options = xOptions || {};
   var filters = options.filters || {};
 
   const xray = (
@@ -250,7 +250,7 @@ function load(html: any, url?: string) {
   return $;
 }
 
-function WalkHTML(xray: any, selector: any, scope: any, filters: any) {
+function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
   return ($: Cheerio | CheerioAPI, fn: any) => {
     walk(
       selector,
@@ -289,7 +289,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: any) {
         }
         return next();
       },
-      (err: Error, obj: any) => {
+      (err, obj) => {
         if (err) return fn(err);
         fn(null, obj, $);
       }

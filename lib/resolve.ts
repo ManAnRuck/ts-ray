@@ -25,7 +25,7 @@ export function resolve(
   $: Cheerio | CheerioAPI,
   scope: any,
   selector: any,
-  filters: any
+  filters: Filters
 ) {
   debug("resolve($j, %j)", scope, selector);
   filters = filters || {};
@@ -142,13 +142,17 @@ function attribute($el: Cheerio, attr: string) {
  * @return {Array|String}
  */
 
+export interface Filters {
+  [name: string]: (...args: string[]) => string;
+}
+
 function filter(
   obj: any,
   $: Cheerio | CheerioAPI,
   _scope: any,
   _selector: any,
   value: any,
-  filters: any
+  filters: Filters
 ) {
   var ctx = { $: $, selector: obj.selector, attribute: obj.attribute };
   return (obj.filters || []).reduce((out: string, filter: any) => {

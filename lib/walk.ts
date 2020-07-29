@@ -3,6 +3,7 @@
  */
 import { isObject } from "./util";
 import Batch from "batch";
+import { Selector } from "./params";
 
 /**
  * Walk
@@ -18,23 +19,28 @@ import Batch from "batch";
  * @param {String} key (private)
  */
 
-export function walk(value: string | any, fn: any, done: any, key?: string) {
+export function walk(
+  value: Selector,
+  fn: (value: Selector, key?: string, next?: any) => any,
+  done: (err: Error | null, value?: string | object) => any,
+  key?: string
+) {
   var batch = Batch();
-  var out: any;
+  var out: string | object;
 
   if (isObject(value)) {
     out = {};
     Object.keys(value).forEach(function (k) {
-      var v = value[k];
+      var v = (value as any)[k];
       batch.push((next: any) => {
         walk(
           v,
           fn,
-          (err: Error, value: string) => {
+          (err, value) => {
             if (err) return next(err);
             // ignore undefined values
             if (undefined !== value && value !== "") {
-              out[k] = value;
+              (out as any)[k] = value;
             }
             next();
           },
@@ -43,7 +49,6 @@ export function walk(value: string | any, fn: any, done: any, key?: string) {
       });
     });
   } else {
-    out = null;
     batch.push((next: any) => {
       fn(value, key, (err: Error, v: string) => {
         if (err) return next(err);
