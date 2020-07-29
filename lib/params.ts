@@ -9,8 +9,8 @@ import { Node } from "..";
  */
 
 export interface ParamsResult {
-  source?: any;
-  context?: any;
+  source?: Selector | Cheerio | CheerioStatic | FinalFunction | null;
+  context?: Selector | null;
   selector: Selector;
 }
 
@@ -19,7 +19,7 @@ type FinalFunction = (err: Error, result: any) => any;
 export type xRayFn = (
   source: Selector | Cheerio | CheerioStatic | FinalFunction,
   scope?: Selector | any,
-  selector?: SelectorObject | SelectorObject[] | SelectorArray[] | undefined
+  selector?: SelectorTypes | undefined
 ) => Node;
 
 export interface SelectorObject {
@@ -27,6 +27,8 @@ export interface SelectorObject {
 }
 
 export type SelectorArray = Selector[] | SelectorArray[];
+
+export type SelectorTypes = SelectorObject | SelectorObject[] | SelectorArray[];
 
 export type Selector =
   | SelectorObject
@@ -47,7 +49,7 @@ export type Selector =
  */
 export const params = (
   source: any,
-  context?: string | Selector,
+  context?: Selector,
   selector?: Selector
 ) => {
   const args: ParamsResult = {
