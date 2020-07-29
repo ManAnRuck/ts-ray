@@ -11,9 +11,9 @@ var sts = require("stream-to-string");
  * @param {Stream} strem
  * @return {Promise}
  */
-export const streamToPromise = (stream: any) => {
+export const streamToPromise = (stream: object) => {
   return new Promise(function (resolve, reject) {
-    sts(stream, (err: any, resStr: string) => {
+    sts(stream, (err: Error, resStr: string) => {
       if (err) {
         reject(err);
       } else {

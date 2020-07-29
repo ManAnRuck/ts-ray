@@ -3,6 +3,7 @@
  */
 import Debug from "debug";
 import { isArray } from "./util";
+import { Selector } from "./params";
 var parse = require("x-ray-parse");
 
 const debug = Debug("resolve");
@@ -24,9 +25,10 @@ const debug = Debug("resolve");
 export function resolve(
   $: Cheerio | CheerioAPI,
   scope: any,
-  selector: any,
+  selector: string | string[],
   filters: Filters
 ) {
+  // console.log("XXX", typeof selector, selector);
   debug("resolve($j, %j)", scope, selector);
   filters = filters || {};
   var array = isArray(selector);
@@ -131,6 +133,21 @@ function attribute($el: Cheerio, attr: string) {
   }
 }
 
+export interface Filters {
+  [name: string]: (...args: string[]) => string;
+}
+
+export interface Filter {
+  name: string;
+  args: string[];
+}
+
+export interface FilterObject {
+  selector: string;
+  attribute: string;
+  filters: Filter[];
+}
+
 /**
  * Filter the value(s)
  *
@@ -141,21 +158,16 @@ function attribute($el: Cheerio, attr: string) {
  * @param {Object} filters
  * @return {Array|String}
  */
-
-export interface Filters {
-  [name: string]: (...args: string[]) => string;
-}
-
 function filter(
-  obj: any,
+  obj: FilterObject,
   $: Cheerio | CheerioAPI,
-  _scope: any,
-  _selector: any,
-  value: any,
+  _scope: string | boolean | null,
+  _selector: Selector,
+  value: string,
   filters: Filters
 ) {
   var ctx = { $: $, selector: obj.selector, attribute: obj.attribute };
-  return (obj.filters || []).reduce((out: string, filter: any) => {
+  return (obj.filters || []).reduce((out, filter) => {
     var fn = filters[filter.name];
     if (typeof fn === "function") {
       var args = [out].concat(filter.args || []);

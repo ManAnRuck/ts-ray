@@ -7,19 +7,10 @@ import { isUrl, isHTML } from "./util";
  * Export `params`
  */
 
-/**
- * Sort out the parameters
- *
- * @param {String|Array|Object} source
- * @param {String|Array|Object} context
- * @param {String|Array|Object} selector
- * @return {Object}
- */
-
 export interface ParamsResult {
   source?: any;
   context?: any;
-  selector: any;
+  selector: Selector;
 }
 
 export type xRayFn = (
@@ -40,11 +31,19 @@ export type Selector =
   | string[]
   | xRayFn;
 
-export function params(
+/**
+ * Sort out the parameters
+ *
+ * @param {String|Array|Object} source
+ * @param {String|Array|Object} context
+ * @param {String|Array|Object} selector
+ * @return {Object}
+ */
+export const params = (
   source: any,
   context?: string | Selector,
   selector?: Selector
-) {
+) => {
   var args: ParamsResult = {
     selector: source,
   };
@@ -68,4 +67,4 @@ export function params(
   }
 
   return args;
-}
+};

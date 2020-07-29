@@ -9,12 +9,16 @@ import { walk } from "./lib/walk";
 import Debug from "debug";
 import cheerio from "cheerio";
 import enstore from "enstore";
+import { isStringArray } from "./lib/typeGuards";
 
 const debug = Debug("ts-ray");
 
 var fs = require("fs");
 
-var CONST = {
+var CONST: {
+  CRAWLER_METHODS: string[];
+  INIT_STATE: State;
+} = {
   CRAWLER_METHODS: [
     "concurrency",
     "throttle",
@@ -40,7 +44,7 @@ export interface Options {
 export interface State {
   stream: boolean;
   concurrency: number;
-  paginate: boolean;
+  paginate: string | false;
   limit: number | ((limit: number) => any);
   abort: boolean | ((validator: any, url?: string) => any);
 }
@@ -181,13 +185,13 @@ export default (xOptions?: Options) => {
       return node;
     };
 
-    node.abort = (validator: any) => {
+    node.abort = (validator: (result: any, url?: string) => any) => {
       if (!validator) return state.abort;
       state.abort = validator;
       return node;
     };
 
-    node.paginate = (paginate?: any): any => {
+    node.paginate = (paginate: string): any => {
       if (!paginate) return state.paginate;
       state.paginate = paginate;
       return node;
@@ -232,10 +236,10 @@ export default (xOptions?: Options) => {
   return xray;
 };
 
-const Request = (crawler: any) => {
+const Request = (crawler: Crawler.Instance) => {
   return (url: string, fn: any) => {
     debug("fetching %s", url);
-    crawler(url, (err: Error, ctx: any) => {
+    crawler(url, (err, ctx) => {
       if (err) return fn(err);
       debug("got response for %s with status code: %s", url, ctx.status);
       return fn(null, ctx.body);
@@ -254,7 +258,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
   return ($: Cheerio | CheerioAPI, fn: any) => {
     walk(
       selector,
-      (v: any, _k: any, next: any) => {
+      (v, _k, next) => {
         if (typeof v === "string") {
           var value = resolve($!, root(scope), v, filters);
           return next(null, value);
@@ -264,7 +268,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
             return next(null, obj);
           });
         } else if (isArray(v)) {
-          if (typeof v[0] === "string") {
+          if (isStringArray(v)) {
             return next(null, resolve($, root(scope), v, filters));
           } else if (typeof v[0] === "object") {
             var $scope = "find" in $ ? $.find(scope) : $(scope);
