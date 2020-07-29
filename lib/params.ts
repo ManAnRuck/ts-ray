@@ -1,7 +1,7 @@
 /**
  * Module Dependencies
  */
-import { isUrl, isHTML, isArray } from "./util";
+import { isUrl, isHTML } from "./util";
 
 /**
  * Export `params`

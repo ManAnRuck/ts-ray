@@ -63,7 +63,7 @@ function absolute(path: string, $: CheerioStatic) {
   }
   $(selector).each(abs);
 
-  function abs(i: number, el: CheerioElement) {
+  function abs(_i: number, el: CheerioElement) {
     var $el = $(el);
     var key = null;
     var src = null;

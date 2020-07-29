@@ -145,8 +145,8 @@ function attribute($el: Cheerio, attr: string) {
 function filter(
   obj: any,
   $: Cheerio | CheerioAPI,
-  scope: any,
-  selector: any,
+  _scope: any,
+  _selector: any,
   value: any,
   filters: any
 ) {

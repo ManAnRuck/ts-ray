@@ -371,7 +371,7 @@ describe("Xray basics", function () {
     ])
       .paginate(".next_page@href")
       .limit(3)
-      .abort(function (result: any, url: any) {
+      .abort(function (_result: any, url: any) {
         // Break after page 2
         if (url.indexOf("page=3") >= 0) return true;
 
@@ -404,7 +404,7 @@ describe("Xray basics", function () {
     ])
       .paginate(".next_page@href")
       .limit(10);
-    (function (err: Error, arr: any) {
+    (function (err: Error, _arr: any) {
       timesCalled++;
       assert.ifError(err);
       assert.equal(1, timesCalled, "callback was called more than once");
@@ -539,7 +539,6 @@ describe("Xray basics", function () {
       var promise = xray.then(resHandler, errorHandler);
 
       return promise.then(function () {
-        console.log(resHandler.callCount);
         assert(resHandler.calledOnce === true, "result handler called once");
         assert.deepStrictEqual(resHandler.firstCall.args[0], expected);
         assert(errorHandler.called === false, "error handler never called");

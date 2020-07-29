@@ -241,7 +241,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: any) {
   return ($: Cheerio | CheerioAPI, fn: any) => {
     walk(
       selector,
-      (v: any, k: any, next: any) => {
+      (v: any, _k: any, next: any) => {
         if (typeof v === "string") {
           var value = resolve($!, root(scope), v, filters);
           return next(null, value);
@@ -261,7 +261,7 @@ function WalkHTML(xray: any, selector: any, scope: any, filters: any) {
             // Handle the empty result set (thanks @jenbennings!)
             if (!pending) return next(null, out);
 
-            return $scope.each((i: number, el: CheerioElement) => {
+            return $scope.each((i: number, _el: CheerioElement) => {
               var $innerscope = $scope.eq(i);
               var node = xray(scope, v[0]);
               node($innerscope, (err: Error, obj: any) => {
