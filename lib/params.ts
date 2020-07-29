@@ -2,6 +2,7 @@
  * Module Dependencies
  */
 import { isUrl, isHTML } from "./util";
+import { Node } from "..";
 
 /**
  * Export `params`
@@ -17,7 +18,7 @@ export type xRayFn = (
   source: any,
   scope?: any,
   selector?: SelectorObject | SelectorObject[] | undefined
-) => any;
+) => Node;
 
 export interface SelectorObject {
   [name: string]: Selector;
@@ -27,6 +28,7 @@ export type Selector =
   | SelectorObject
   | SelectorObject[]
   | Selector[]
+  | Node
   | string
   | string[]
   | xRayFn;

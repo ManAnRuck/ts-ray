@@ -4,7 +4,7 @@ import absolutes from "./lib/absolutes";
 import streamHelper from "./lib/stream";
 import Crawler from "x-ray-crawler";
 import { resolve, Filters } from "./lib/resolve";
-import { params, Selector } from "./lib/params";
+import { params, Selector, xRayFn } from "./lib/params";
 import { walk } from "./lib/walk";
 import Debug from "debug";
 import cheerio from "cheerio";
@@ -14,9 +14,18 @@ import fs from "fs";
 
 const debug = Debug("ts-ray");
 
+export interface Node extends xRayFn {
+  abort: (...args: any[]) => Node;
+  paginate: (...args: any[]) => Node;
+  limit: (...args: any[]) => Node;
+  stream: (...args: any[]) => NodeJS.ReadableStream;
+  write: (...args: any[]) => fs.WriteStream | NodeJS.ReadableStream;
+  then: (...args: any[]) => Promise<any>;
+}
+
 const CONST: {
   CRAWLER_METHODS: string[];
-  INIT_STATE: State;
+  INIT_STATE: any;
 } = {
   CRAWLER_METHODS: [
     "concurrency",
@@ -41,11 +50,11 @@ export interface Options {
 }
 
 export interface State {
-  stream: any;
+  stream: fs.WriteStream | false;
   concurrency: number;
-  paginate: string | false;
-  limit: number | ((limit: number) => any);
-  abort: boolean | ((validator: any, url?: string) => any);
+  paginate: false | string;
+  limit: number;
+  abort: (...args: any[]) => Node;
 }
 
 export default (xOptions?: Options) => {
@@ -57,7 +66,7 @@ export default (xOptions?: Options) => {
     sourceP: Selector | Cheerio | CheerioStatic,
     scopeP?: Selector,
     selectorP?: Selector
-  ) => {
+  ): Node => {
     debug("xray params: %j", {
       source: sourceP,
       scope: scopeP,
@@ -68,7 +77,7 @@ export default (xOptions?: Options) => {
     let source = args.source;
     const scope = args.context;
 
-    const state: State = { ...CONST.INIT_STATE };
+    const state = { ...CONST.INIT_STATE };
     const store = enstore();
     let pages: any[] = [];
     let stream: any;
@@ -77,7 +86,7 @@ export default (xOptions?: Options) => {
 
     const request = Request(crawler);
 
-    const node = function (source2: any, fnP?: any) {
+    const node: Node = (source2: any, fnP?: any): Node => {
       let fn = fnP;
       if (!fnP) {
         fn = source2;
@@ -185,13 +194,13 @@ export default (xOptions?: Options) => {
       return node;
     };
 
-    node.abort = (validator: (result: any, url?: string) => any) => {
-      if (!validator) return state.abort;
+    node.abort = (validator) => {
+      if (!validator && state.abort) return state.abort;
       state.abort = validator;
       return node;
     };
 
-    node.paginate = (paginate: string): any => {
+    node.paginate = (paginate) => {
       if (!paginate) return state.paginate;
       state.paginate = paginate;
       return node;
@@ -210,7 +219,7 @@ export default (xOptions?: Options) => {
       return rs;
     };
 
-    node.write = function (path?: string) {
+    node.write = (path?: string) => {
       if (!path) return node.stream();
       state.stream = fs.createWriteStream(path);
       streamHelper.waitCb(state.stream, node);
@@ -254,11 +263,11 @@ const load = (htmlP: string | CheerioStatic, url?: string) => {
   return $;
 };
 
-function WalkHTML(xray: any, selector: any, scope: any, filters: Filters) {
+function WalkHTML(xray: any, selector: any, scope: any, filters: Filters): any {
   return ($: CheerioStatic | Cheerio, fn: any) => {
     walk(
       selector,
-      (v, _k, next) => {
+      (v, _k, next): any => {
         if (typeof v === "string") {
           const value = resolve($, root(scope), v, filters);
           return next(null, value);
