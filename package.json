@@ -9,8 +9,9 @@
     "email": "matt@lapwinglabs.com"
   },
   "scripts": {
-    "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly",
+    "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/.bin/ts-mocha test/**/*_spec.ts --report lcovonly",
     "pretest": "standard",
+    "build": "tsc",
     "test": "ts-mocha test/**/*_spec.ts",
     "lint": "yarn lint:ts && yarn lint:es",
     "lint:ts": "tsc --noEmit",

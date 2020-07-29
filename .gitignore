@@ -6,3 +6,4 @@ examples/*.json
 coverage
 .idea
 travis-phantomjs
+dist
