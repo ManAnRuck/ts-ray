@@ -8,12 +8,17 @@
     "name": "Matthew Mueller",
     "email": "matt@lapwinglabs.com"
   },
+  "scripts": {
+    "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly",
+    "pretest": "standard",
+    "test": "ts-mocha test/**/*_spec.ts"
+  },
   "contributors": [
-   "Paul Barrett",
-   "Kiko Beats <josefrancisco.verdu@gmail.com>",    
-   "Fabien Franzen <info@atelierfabien.be>",
-   "Wah Loon Keng <kengzwl@gmail.com>",
-   "Daniel Lathrop <daniel.lathrop@gmail.com>"
+    "Paul Barrett",
+    "Kiko Beats <josefrancisco.verdu@gmail.com>",
+    "Fabien Franzen <info@atelierfabien.be>",
+    "Wah Loon Keng <kengzwl@gmail.com>",
+    "Daniel Lathrop <daniel.lathrop@gmail.com>"
   ],
   "repository": {
     "type": "git",
@@ -31,7 +36,7 @@
     "web"
   ],
   "dependencies": {
-    "batch": "~0.6.0",
+    "batch": "^0.6.1",
     "bluebird": "^3.4.7",
     "chalk": "~2.4.0",
     "cheerio": "~0.22.0",
@@ -45,6 +50,16 @@
     "x-ray-parse": "~1.0.1"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.21",
+    "@types/concat-stream": "^1.6.0",
+    "@types/debug": "^4.1.5",
+    "@types/expect": "^24.3.0",
+    "@types/is-url": "^1.2.28",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.26",
+    "@types/rimraf": "^3.0.0",
+    "@types/sinon": "^9.0.4",
+    "@types/x-ray-crawler": "^2.0.0",
     "coveralls": "3.0.6",
     "istanbul": "0.4.5",
     "mocha": "~6.1.4",
@@ -52,15 +67,13 @@
     "multiline": "1.0.2",
     "rimraf": "3.0.0",
     "sinon": "^7.3.2",
-    "standard": "6.0.8"
+    "standard": "6.0.8",
+    "ts-mocha": "^7.0.0",
+    "ts-node-dev": "^1.0.0-pre.56",
+    "typescript": "^3.9.7"
   },
   "engines": {
     "node": ">= 6.0.0"
-  },
-  "scripts": {
-    "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly",
-    "pretest": "standard",
-    "test": "mocha"
   },
   "license": "MIT"
 }

@@ -2,14 +2,7 @@
  * Module Dependencies
  */
 
-var Promise = require('bluebird')
-var sts = require('stream-to-string')
-
-/**
- * Export `streamToPromise`
- */
-
-module.exports = streamToPromise
+var sts = require("stream-to-string");
 
 /**
  * Convert a readStream from xray.stream() into
@@ -18,18 +11,18 @@ module.exports = streamToPromise
  * @param {Stream} strem
  * @return {Promise}
  */
-function streamToPromise (stream) {
+export const streamToPromise = (stream: any) => {
   return new Promise(function (resolve, reject) {
-    sts(stream, function (err, resStr) {
+    sts(stream, (err: any, resStr: string) => {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
         try {
-          resolve(JSON.parse(resStr))
+          resolve(JSON.parse(resStr));
         } catch (e) {
-          reject(e)
+          reject(e);
         }
       }
-    })
-  })
-}
+    });
+  });
+};
