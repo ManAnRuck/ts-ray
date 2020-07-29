@@ -2,8 +2,8 @@
   "name": "ts-ray",
   "description": "structure any website",
   "homepage": "https://github.com/matthewmueller/x-ray#readme",
-  "version": "2.3.4",
-  "main": "index.js",
+  "version": "0.1.0",
+  "main": "dist/index.js",
   "author": {
     "name": "Matthew Mueller",
     "email": "matt@lapwinglabs.com"
@@ -12,6 +12,7 @@
     "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/.bin/ts-mocha test/**/*_spec.ts --report lcovonly",
     "pretest": "standard",
     "build": "tsc",
+    "prepublish": "yarn build",
     "test": "ts-mocha test/**/*_spec.ts",
     "lint": "yarn lint:ts && yarn lint:es",
     "lint:ts": "tsc --noEmit",

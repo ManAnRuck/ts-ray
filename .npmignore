@@ -3,3 +3,10 @@ test
 examples
 *.sock
 coverage
+.eslint*
+.gitignore
+.travis.yml
+logo.png
+renovate.json
+*.log
+lib
